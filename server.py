@@ -4,12 +4,16 @@ from util.request import Request
 from util.response import Response
 from util.router import Router
 from util.index import landing_path
+from util.login import login_path
+from util.signup import signup_path
 
 class MyTCPHandler(socketserver.BaseRequestHandler):
 
     def __init__(self, request, client_address, server):
         self.router = Router()
         self.router.add_route('GET', '/', landing_path,True)
+        self.router.add_route('GET', '/login', login_path, True)
+        self.router.add_route('GET', '/signup', signup_path, True)
         super().__init__(request, client_address, server)
 
         #add paths

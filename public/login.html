@@ -1,0 +1,145 @@
+
+<style>
+
+.auth-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 58px - 200px);
+  padding: 40px 24px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 380px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-muted);
+  border-radius: 10px;
+  padding: 36px 40px;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.auth-card-header {
+  margin-bottom: 28px;
+  text-align: center;
+}
+
+.auth-card-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.auth-card-subtitle {
+  color: var(--text-dim);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* ── Login Form ── */
+#login-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.switch-link {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: 12px;
+  font-family: var(--font-body);
+  cursor: pointer;
+  padding: 0;
+  text-decoration: none;
+  transition: color 0.2s;
+  display: inline;
+}
+.switch-link:hover { color: var(--accent-hover); }
+
+.auth-submit {
+  width: 100%;
+  padding: 12px;
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+.auth-switch {
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-top: 20px;
+}
+
+#login-error {
+  background: rgba(221, 102, 102, 0.1);
+  border: 1px solid rgba(221, 102, 102, 0.3);
+  border-radius: 4px;
+  padding: 8px 12px;
+  color: #dd6666;
+  font-size: 12px;
+  margin-bottom: 12px;
+  display: none;
+}
+</style>
+
+<!-- ── LOGIN PAGE CONTENT ── -->
+<section class="auth-page">
+  <div class="auth-card">
+
+    <div class="auth-card-header">
+      <h2 class="auth-card-title">Welcome Back</h2>
+      <p class="auth-card-subtitle">Sign in to continue your gaming journey</p>
+    </div>
+
+    <p id="login-error"
+       style="display:none; color:#d66; font-size:12px; margin-bottom:12px;">
+      There was an error logging you in. Either your username or password is incorrect.
+    </p>
+
+    <form id="login-form">
+
+      <input
+        class="input-field"
+        type="text"
+        id="username"
+        name="username"
+        placeholder="Username"
+        required
+      />
+
+      <input
+        class="input-field"
+        type="password"
+        id="password"
+        name="password"
+        placeholder="Password"
+        required
+      />
+
+      <a href="/forgot-password" class="switch-link"
+         style="display:block; text-align:right; margin-top:-4px; margin-bottom:16px;">
+        Forgot password?
+      </a>
+
+      <button type="submit" class="btn-primary auth-submit">
+        Sign In
+      </button>
+
+      <p class="auth-switch">
+        Don't have an account?
+        <a href="/signup" class="switch-link">
+          Create one
+        </a>
+      </p>
+
+    </form>
+
+  </div>
+</section>
