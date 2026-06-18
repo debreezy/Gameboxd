@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gameboxd</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Reset & base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-base:        #0d0b08;
+      --bg-surface:     #131009;
+      --bg-subtle:      #1a1610;
+      --border-faint:   #1e1b13;
+      --border-muted:   #2e2a1e;
+      --border-strong:  #4a4530;
+      --text-primary:   #ede7d4;
+      --text-secondary: #9a8f6e;
+      --text-muted:     #6b6045;
+      --text-dim:       #4a4530;
+      --accent:         #d4a843;
+      --accent-hover:   #e8bc55;
+      --font-body:      'Sora', sans-serif;
+      --font-display:   'Playfair Display', Georgia, serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg-base);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    ::-webkit-scrollbar       { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-base); }
+    ::-webkit-scrollbar-thumb { background: var(--border-muted); border-radius: 3px; }
+
+    /* ── Navbar ── */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(13, 11, 8, 0.93);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-faint);
+    }
+
+    .navbar-inner {
+      padding: 0 40px;
+      height: 58px;
+      display: flex;
+      align-items: center;
+      gap: 40px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+
+    .logo-text {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 20px;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      flex: 1;
+      list-style: none;
+    }
+
+    .nav-link {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 11px;
+      font-family: var(--font-body);
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      padding: 6px 4px;
+      position: relative;
+      transition: color 0.2s;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 1px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transition: transform 0.2s;
+    }
+
+    .nav-link:hover        { color: var(--text-primary); }
+    .nav-link:hover::after { transform: scaleX(1); }
+    .nav-link.active       { color: var(--accent); }
+    .nav-link.active::after { transform: scaleX(1); }
+
+    .nav-auth {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-left: auto;
+    }
+
+    /* ── Buttons ── */
+    .btn-primary {
+      background: var(--accent);
+      color: var(--bg-base);
+      border: none;
+      border-radius: 4px;
+      padding: 9px 22px;
+      font-size: 11px;
+      font-family: var(--font-body);
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      white-space: nowrap;
+    }
+    .btn-primary:hover  { background: var(--accent-hover); }
+    .btn-primary:active { transform: scale(0.97); }
+
+    .btn-ghost {
+      background: none;
+      color: var(--text-secondary);
+      border: 1px solid var(--border-muted);
+      border-radius: 4px;
+      padding: 9px 22px;
+      font-size: 11px;
+      font-family: var(--font-body);
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+      white-space: nowrap;
+      display: inline-block;
+      text-decoration: none;
+    }
+    .btn-ghost:hover { border-color: var(--text-muted); color: var(--text-primary); }
+
+    .nav-greeting {
+      font-size: 12px;
+      font-family: var(--font-body);
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }
+
+    /* ── Page content wrapper ── */
+    .page-content {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ── Footer ── */
+    .footer {
+      border-top: 1px solid var(--border-faint);
+      margin-top: 80px;
+      padding: 28px 24px;
+      text-align: center;
+    }
+
+    .footer p {
+      color: var(--text-dim);
+      font-size: 12px;
+      letter-spacing: 0.04em;
+    }
+
+    .footer span { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+  <!-- ── NAVBAR ── -->
+  <header class="navbar">
+    <div class="navbar-inner">
+      <a href="/" class="logo">
+        <span class="logo-text">Gameboxd</span>
+      </a>
+
+      <nav>
+        <ul class="nav-links">
+          <li><button class="nav-link" data-nav="games">Games</button></li>
+          <li><button class="nav-link" data-nav="members">Members</button></li>
+          <li><button class="nav-link" data-nav="journal">Journal</button></li>
+          <li><button class="nav-link" data-nav="lists">Lists</button></li>
+        </ul>
+      </nav>
+
+      <div class="nav-auth" id="auth-logged-out">
+        <button class="btn-ghost" id="open-login">Sign in</button>
+        <button class="btn-primary" id="open-signup">Create account</button>
+      </div>
+
+      <div class="nav-auth" id="auth-logged-in" style="display: none;">
+        <p class="nav-greeting" id="hello-username">Hello, route_not_done!</p>
+        <a href="/logout" class="btn-ghost">Logout</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── PAGE CONTENT SLOT ── -->
+  {{content}}
+
+  <!-- ── FOOTER ── -->
+  <footer class="footer">
+    <p>© 2025 Gameboxd &nbsp;·&nbsp; <span>Track every game you play</span></p>
+  </footer>
+
+  <!-- ── Shared nav JS ── -->
+  <script>
+
+    document.querySelectorAll('.nav-link').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'))
+        btn.classList.add('active')
+      })
+    })
+
+
+    async function main(){
+        const  userProfile = await( await fetch("/api/users/@me")).json();
+        const loginButton = document.getElementById('open-login');
+        const registerButton = document.getElementById('open-signup');
+        const LoggedIn = document.getElementById('auth-logged-in');
+        const LoggedOut = document.getElementById('auth-logged-out');
+        const myUsername = document.getElementById('hello-username');
+
+        if (userProfile.id)  {
+            LoggedOut.style.display = 'none';
+            LoggedIn.style.display = 'flex';
+            myUsername.innerText = 'Hello, ${userProfile.username}!'
+        } else {
+            LoggedOut.style.display = 'flex';
+            LoggedIn.style.display = 'none';
+        }
+    }
+
+    main();
+
+  </script>
+
+</body>
+</html>
