@@ -114,6 +114,7 @@ body {
   font-family: var(--font-body);
   color: var(--text-secondary);
   white-space: nowrap;
+  text-decoration: none;
 }
 
 /* ── Buttons (shared across pages) ── */
@@ -229,7 +230,7 @@ body {
       </div>
 
       <div class="nav-auth" id="auth-logged-in" style="display: none;">
-        <p class="nav-greeting" id="hello-username">Hello, route_not_done!</p>
+        <a href="/profile" class="nav-link" id="hello-username">Hello, route_not_done!</a>
         <a href="/logout" class="btn-ghost">Logout</a>
       </div>
     </div>
@@ -265,7 +266,7 @@ body {
         if (userProfile.id)  {
             LoggedOut.style.display = 'none';
             LoggedIn.style.display = 'flex';
-            myUsername.innerText = 'Hello, ${userProfile.username}!'
+            myUsername.innerText = `Hello, ${userProfile.username}!`
         } else {
             LoggedOut.style.display = 'flex';
             LoggedIn.style.display = 'none';
