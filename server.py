@@ -8,6 +8,7 @@ from util.login import login_path, login_user
 from util.signup import signup_path, signup_user
 from util.get_user import get_user
 from util.logout import logout_view
+from util.home import home_path
 
 class MyTCPHandler(socketserver.BaseRequestHandler):
 
@@ -20,6 +21,8 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         self.router.add_route('POST', '/login', login_user, False)
         self.router.add_route("GET", "/api/users/@me", get_user, False)
         self.router.add_route("GET", "/logout", logout_view, False)
+        self.router.add_route("GET", "/home", home_path, True)
+
         super().__init__(request, client_address, server)
 
         #add paths

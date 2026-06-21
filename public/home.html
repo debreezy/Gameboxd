@@ -1,0 +1,552 @@
+<style>
+  .home-page {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 36px 24px 80px;
+  }
+
+  /* ── Welcome banner ── */
+  .welcome-banner {
+    text-align: center;
+    padding: 28px 0 40px;
+    border-bottom: 1px solid var(--border-faint);
+    margin-bottom: 40px;
+    display: none;
+  }
+
+  .welcome-text {
+    font-size: 15px;
+    color: var(--text-secondary);
+  }
+
+  .welcome-text strong {
+    color: var(--text-primary);
+    font-weight: 600;
+    border-bottom: 1px solid var(--accent);
+  }
+
+  /* ── Section headers ── */
+  .home-section { margin-bottom: 52px; }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .section-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .section-more {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .section-more:hover { color: var(--accent); }
+
+  /* ── Cover grid (popular games) ── */
+  .cover-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+  }
+
+  .cover-card {
+    position: relative;
+    cursor: pointer;
+    overflow: hidden;
+    border-radius: 4px;
+  }
+
+  .cover-img {
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    display: block;
+    background: var(--bg-subtle);
+    transition: transform 0.2s;
+  }
+  .cover-card:hover .cover-img { transform: scale(1.04); }
+
+  .cover-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 55%);
+    opacity: 0;
+    transition: opacity 0.2s;
+    display: flex;
+    align-items: flex-end;
+    padding: 8px;
+  }
+  .cover-card:hover .cover-overlay { opacity: 1; }
+
+  .cover-title {
+    font-size: 10px;
+    font-weight: 600;
+    color: #fff;
+    line-height: 1.3;
+  }
+
+  /* ── Activity grid (recent plays) ── */
+  .activity-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+  }
+
+  .activity-card { cursor: pointer; }
+
+  .activity-cover-wrap {
+    overflow: hidden;
+    border-radius: 4px;
+    margin-bottom: 6px;
+  }
+
+  .activity-cover {
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    display: block;
+    background: var(--bg-subtle);
+    transition: transform 0.2s;
+  }
+  .activity-card:hover .activity-cover { transform: scale(1.04); }
+
+  .activity-meta {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 4px;
+  }
+
+  .activity-avatar {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--border-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8px;
+    font-weight: 700;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+
+  .activity-username {
+    font-size: 10px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .activity-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  /* ── Stars ── */
+  .star-row { display: flex; gap: 1px; }
+  .star      { font-size: 10px; color: var(--accent); line-height: 1; }
+  .star.empty { color: var(--border-muted); }
+
+  .activity-date {
+    font-size: 9px;
+    color: var(--text-dim);
+  }
+
+  /* ── Popular reviews ── */
+  .reviews-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .review-row {
+    display: flex;
+    gap: 16px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--border-faint);
+    cursor: pointer;
+  }
+
+  .review-cover {
+    width: 46px;
+    height: 62px;
+    object-fit: cover;
+    border-radius: 3px;
+    background: var(--bg-subtle);
+    flex-shrink: 0;
+  }
+
+  .review-body { flex: 1; min-width: 0; }
+
+  .review-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+  }
+
+  .review-game-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .review-game-year  { font-size: 11px; color: var(--text-dim); }
+
+  .review-text {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 10px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .review-footer {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .reviewer-avatar {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--border-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+
+  .reviewer-name { font-size: 12px; color: var(--text-muted); }
+  .review-date   { font-size: 11px; color: var(--text-dim); }
+  .review-likes  { margin-left: auto; font-size: 11px; color: var(--text-dim); }
+
+  /* ── Loading skeleton ── */
+  .skeleton-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+  }
+
+  .skeleton-cover {
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    background: var(--bg-subtle);
+    border-radius: 4px;
+    animation: shimmer 1.4s infinite;
+  }
+
+  .skeleton-review {
+    display: flex;
+    gap: 16px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--border-faint);
+  }
+
+  .skeleton-thumb {
+    width: 46px;
+    height: 62px;
+    background: var(--bg-subtle);
+    border-radius: 3px;
+    flex-shrink: 0;
+    animation: shimmer 1.4s infinite;
+  }
+
+  .skeleton-lines { flex: 1; display: flex; flex-direction: column; gap: 8px; padding-top: 4px; }
+
+  .skeleton-line {
+    height: 10px;
+    background: var(--bg-subtle);
+    border-radius: 4px;
+    animation: shimmer 1.4s infinite;
+  }
+
+  @keyframes shimmer {
+    0%   { opacity: 0.4; }
+    50%  { opacity: 0.8; }
+    100% { opacity: 0.4; }
+  }
+
+  /* ── Empty / error states ── */
+  .empty-state {
+    padding: 32px 0;
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 13px;
+  }
+</style>
+
+<div class="home-page">
+
+  <!-- Welcome banner (shown when logged in) -->
+  <div class="welcome-banner" id="welcome-banner">
+    <p class="welcome-text">
+      Welcome back, <strong id="welcome-username"></strong>.
+      Here's what's been played recently...
+    </p>
+  </div>
+
+  <!-- Recent Activity -->
+  <section class="home-section">
+    <div class="section-header">
+      <span class="section-label">Recent Activity</span>
+      <a href="/games" class="section-more">All Activity</a>
+    </div>
+    <div id="recent-activity-container">
+      <!-- skeleton while loading -->
+      <div class="skeleton-grid" id="recent-activity-skeleton">
+        <div class="skeleton-cover"></div>
+        <div class="skeleton-cover"></div>
+        <div class="skeleton-cover"></div>
+        <div class="skeleton-cover"></div>
+        <div class="skeleton-cover"></div>
+        <div class="skeleton-cover"></div>
+      </div>
+      <div class="activity-grid" id="recent-activity-grid" style="display:none"></div>
+    </div>
+  </section>
+
+  <!-- Popular Games This Week -->
+  <section class="home-section">
+    <div class="section-header">
+      <span class="section-label">Popular Games This Week</span>
+      <a href="/games" class="section-more">More</a>
+    </div>
+    <div id="popular-games-container">
+      <div class="skeleton-grid" id="popular-games-skeleton">
+        <div class="skeleton-cover"></div>
+        <div class="skeleton-cover"></div>
+        <div class="skeleton-cover"></div>
+        <div class="skeleton-cover"></div>
+        <div class="skeleton-cover"></div>
+        <div class="skeleton-cover"></div>
+      </div>
+      <div class="cover-grid" id="popular-games-grid" style="display:none"></div>
+    </div>
+  </section>
+
+  <!-- Popular Reviews -->
+  <section class="home-section">
+    <div class="section-header">
+      <span class="section-label">Popular Reviews</span>
+      <a href="/reviews" class="section-more">More</a>
+    </div>
+    <div id="popular-reviews-container">
+      <div id="popular-reviews-skeleton">
+        <div class="skeleton-review"><div class="skeleton-thumb"></div><div class="skeleton-lines"><div class="skeleton-line" style="width:40%"></div><div class="skeleton-line" style="width:90%"></div><div class="skeleton-line" style="width:75%"></div></div></div>
+        <div class="skeleton-review"><div class="skeleton-thumb"></div><div class="skeleton-lines"><div class="skeleton-line" style="width:35%"></div><div class="skeleton-line" style="width:85%"></div><div class="skeleton-line" style="width:60%"></div></div></div>
+        <div class="skeleton-review"><div class="skeleton-thumb"></div><div class="skeleton-lines"><div class="skeleton-line" style="width:45%"></div><div class="skeleton-line" style="width:88%"></div><div class="skeleton-line" style="width:70%"></div></div></div>
+      </div>
+      <div class="reviews-list" id="popular-reviews-list" style="display:none"></div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  // ── Helpers ────────────────────────────────────────────────
+
+  function stars(rating) {
+    // rating: 1–5, supports half stars if you pass e.g. 4.5
+    const full  = Math.floor(rating)
+    const empty = 5 - Math.ceil(rating)
+    let html = ''
+    for (let i = 0; i < full;  i++) html += '<span class="star">★</span>'
+    for (let i = 0; i < empty; i++) html += '<span class="star empty">★</span>'
+    return `<div class="star-row">${html}</div>`
+  }
+
+  function avatar(username) {
+    return (username || '?')[0].toUpperCase()
+  }
+
+  function formatDate(dateStr) {
+    // expects ISO string or any Date-parseable value from your backend
+    if (!dateStr) return ''
+    const d = new Date(dateStr)
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+  }
+
+  function coverImg(url, title) {
+    return `<img class="cover-img" src="${url || ''}" alt="${title || ''}"
+              onerror="this.style.opacity='0'" />`
+  }
+
+  function hide(id) { document.getElementById(id).style.display = 'none' }
+  function show(id, display = 'block') { document.getElementById(id).style.display = display }
+
+  // ── Render functions ────────────────────────────────────────
+  // Each function receives the JSON your backend returns and
+  // builds the HTML. Adjust property names to match your schema.
+
+  /**
+   * renderRecentActivity(entries)
+   *
+   * Expected shape per entry:
+   * {
+   *   game: { title, cover_url },
+   *   user: { username },
+   *   rating: 4,          // 1–5
+   *   played_at: "2025-06-18T..."
+   * }
+   */
+  function renderRecentActivity(entries) {
+    const grid = document.getElementById('recent-activity-grid')
+
+    if (!entries || entries.length === 0) {
+      grid.innerHTML = '<p class="empty-state">No recent activity yet.</p>'
+      hide('recent-activity-skeleton')
+      show('recent-activity-grid')
+      return
+    }
+
+    grid.innerHTML = entries.map(e => `
+      <div class="activity-card">
+        <div class="activity-cover-wrap">
+          ${coverImg(e.game.cover_url, e.game.title)}
+        </div>
+        <div class="activity-meta">
+          <div class="activity-avatar">${avatar(e.user.username)}</div>
+          <span class="activity-username">${e.user.username}</span>
+        </div>
+        <div class="activity-bottom">
+          ${stars(e.rating)}
+          <span class="activity-date">${formatDate(e.played_at)}</span>
+        </div>
+      </div>
+    `).join('')
+
+    hide('recent-activity-skeleton')
+    show('recent-activity-grid', 'grid')
+  }
+
+  /**
+   * renderPopularGames(games)
+   *
+   * Expected shape per game:
+   * {
+   *   id, title, cover_url
+   * }
+   */
+  function renderPopularGames(games) {
+    const grid = document.getElementById('popular-games-grid')
+
+    if (!games || games.length === 0) {
+      grid.innerHTML = '<p class="empty-state">No games yet.</p>'
+      hide('popular-games-skeleton')
+      show('popular-games-grid')
+      return
+    }
+
+    grid.innerHTML = games.map(g => `
+      <div class="cover-card" onclick="location.href='/games/${g.id}'">
+        ${coverImg(g.cover_url, g.title)}
+        <div class="cover-overlay">
+          <span class="cover-title">${g.title}</span>
+        </div>
+      </div>
+    `).join('')
+
+    hide('popular-games-skeleton')
+    show('popular-games-grid', 'grid')
+  }
+
+  /**
+   * renderPopularReviews(reviews)
+   *
+   * Expected shape per review:
+   * {
+   *   id,
+   *   game: { title, cover_url, release_year },
+   *   user: { username },
+   *   rating: 5,
+   *   body: "Review text...",
+   *   likes: 842,
+   *   created_at: "2025-06-18T..."
+   * }
+   */
+  function renderPopularReviews(reviews) {
+    const list = document.getElementById('popular-reviews-list')
+
+    if (!reviews || reviews.length === 0) {
+      list.innerHTML = '<p class="empty-state">No reviews yet.</p>'
+      hide('popular-reviews-skeleton')
+      show('popular-reviews-list')
+      return
+    }
+
+    list.innerHTML = reviews.map(r => `
+      <div class="review-row" onclick="location.href='/reviews/${r.id}'">
+        <img class="review-cover" src="${r.game.cover_url || ''}" alt="${r.game.title}"
+             onerror="this.style.opacity='0'" />
+        <div class="review-body">
+          <div class="review-top">
+            <span class="review-game-title">${r.game.title}</span>
+            <span class="review-game-year">${r.game.release_year || ''}</span>
+            ${stars(r.rating)}
+          </div>
+          <p class="review-text">${r.body}</p>
+          <div class="review-footer">
+            <div class="reviewer-avatar">${avatar(r.user.username)}</div>
+            <span class="reviewer-name">${r.user.username}</span>
+            <span class="review-date">${formatDate(r.created_at)}</span>
+            <span class="review-likes">♥ ${r.likes || 0}</span>
+          </div>
+        </div>
+      </div>
+    `).join('')
+
+    hide('popular-reviews-skeleton')
+    show('popular-reviews-list')
+  }
+
+  // ── Fetch from backend ──────────────────────────────────────
+
+  async function loadHomepage() {
+    // Welcome banner
+    try {
+      const profile = await (await fetch('/api/users/@me')).json()
+      if (profile && profile.id) {
+        document.getElementById('welcome-username').textContent = profile.username
+        document.getElementById('welcome-banner').style.display = 'block'
+      }
+    } catch (_) {}
+
+    // Recent activity  →  GET /api/activity/recent
+    fetch('/api/activity/recent')
+      .then(r => r.json())
+      .then(data => renderRecentActivity(data))
+      .catch(() => renderRecentActivity([]))
+
+    // Popular games  →  GET /api/games/popular
+    fetch('/api/games/popular')
+      .then(r => r.json())
+      .then(data => renderPopularGames(data))
+      .catch(() => renderPopularGames([]))
+
+    // Popular reviews  →  GET /api/reviews/popular
+    fetch('/api/reviews/popular')
+      .then(r => r.json())
+      .then(data => renderPopularReviews(data))
+      .catch(() => renderPopularReviews([]))
+  }
+
+  loadHomepage()
+</script>

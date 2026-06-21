@@ -163,7 +163,7 @@
                 });
 
                 if (response.ok) {
-                    window.location.href = '/';
+                    window.location.href = '/home';
                 } else {
                     const error = await response.text();
                     errorEl.textContent = error || 'Failed to Login';
