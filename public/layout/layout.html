@@ -251,6 +251,12 @@ body {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'))
         btn.classList.add('active')
+        
+        // Handle navigation
+        const navType = btn.getAttribute('data-nav')
+        if (navType) {
+          window.location.href = `/${navType}`
+        }
       })
     })
 
@@ -276,6 +282,8 @@ body {
     main();
 
   </script>
+
+
 
 </body>
 </html>

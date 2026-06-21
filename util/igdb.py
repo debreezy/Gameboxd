@@ -11,7 +11,21 @@ def get_igdb_token():
             "grant_type":    "client_credentials"
         }
     )
-    token = token_res.json()["access_token"]
+    
+    if token_res.status_code != 200:
+        print(f"Error: Token request failed with status {token_res.status_code}")
+        print(f"Response: {token_res.text}")
+        raise Exception(f"Failed to get IGDB token: {token_res.text}")
+    
+    response_data = token_res.json()
+    if "access_token" not in response_data:
+        print(f"Error: No access_token in response")
+        print(f"Response: {response_data}")
+        raise KeyError(f"access_token not in response. Got: {response_data}")
+
+    print(response_data)
+    
+    token = response_data["access_token"]
     return token
 
 def search_igdb_games(query):

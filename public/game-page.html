@@ -1,0 +1,360 @@
+<style>
+  .games-page {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 36px 24px 80px;
+  }
+
+  /* ── Page header ── */
+  .games-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+    gap: 16px;
+  }
+
+  .games-title {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    flex-shrink: 0;
+  }
+
+  .games-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* ── Search bar ── */
+  .search-wrap {
+    position: relative;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-dim);
+    font-size: 14px;
+    pointer-events: none;
+  }
+
+  .search-input {
+    background: var(--bg-subtle);
+    border: 1px solid var(--border-muted);
+    border-radius: 5px;
+    color: var(--text-primary);
+    font-size: 13px;
+    font-family: var(--font-body);
+    padding: 9px 14px 9px 34px;
+    outline: none;
+    transition: border-color 0.2s, width 0.3s;
+    width: 220px;
+  }
+  .search-input::placeholder { color: var(--text-dim); }
+  .search-input:focus {
+    border-color: var(--text-muted);
+    width: 280px;
+  }
+
+  /* ── Filter button (stub) ── */
+  .filter-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border-muted);
+    border-radius: 5px;
+    color: var(--text-muted);
+    font-size: 11px;
+    font-family: var(--font-body);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 9px 14px;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+    white-space: nowrap;
+  }
+  .filter-btn:hover { border-color: var(--text-muted); color: var(--text-primary); }
+
+  .filter-icon { font-size: 12px; }
+
+  /* ── Results count ── */
+  .results-meta {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-bottom: 20px;
+    min-height: 18px;
+  }
+
+  .results-meta span { color: var(--text-muted); }
+
+  /* ── Games grid ── */
+  .games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 20px 14px;
+  }
+
+  /* ── Game card ── */
+  .game-card {
+    cursor: pointer;
+    display: block;
+    text-decoration: none;
+  }
+
+  .game-card-cover {
+    position: relative;
+    overflow: hidden;
+    border-radius: 5px;
+    margin-bottom: 8px;
+  }
+
+  .game-card-img {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    display: block;
+    background: var(--bg-subtle);
+    transition: transform 0.25s;
+  }
+  .game-card:hover .game-card-img { transform: scale(1.04); }
+
+  .game-card-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity 0.2s;
+    display: flex;
+    align-items: flex-end;
+    padding: 10px;
+  }
+  .game-card:hover .game-card-overlay { opacity: 1; }
+
+  .game-card-quick {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .game-card-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.35;
+    margin-bottom: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .game-card-year {
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+
+  /* ── Skeleton grid ── */
+  .skeleton-games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 20px 14px;
+  }
+
+  .skeleton-game-card { display: flex; flex-direction: column; gap: 8px; }
+
+  .skeleton-cover {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    background: var(--bg-subtle);
+    border-radius: 5px;
+    animation: shimmer 1.4s infinite;
+  }
+
+  .skeleton-line {
+    height: 10px;
+    background: var(--bg-subtle);
+    border-radius: 4px;
+    animation: shimmer 1.4s infinite;
+  }
+
+  @keyframes shimmer {
+    0%   { opacity: 0.4; }
+    50%  { opacity: 0.8; }
+    100% { opacity: 0.4; }
+  }
+
+  /* ── Loading dots ── */
+  .loading-dots::after {
+    content: '.';
+    animation: dots 1.5s steps(4, end) infinite;
+  }
+
+  @keyframes dots {
+    0%, 20% { content: '.'; }
+    40% { content: '..'; }
+    60% { content: '...'; }
+    80%, 100% { content: ''; }
+  }
+
+  /* ── Empty / error states ── */
+  .empty-state {
+    grid-column: 1 / -1;
+    padding: 60px 0;
+    text-align: center;
+    color: var(--text-dim);
+  }
+
+  .empty-state p { font-size: 14px; margin-bottom: 8px; color: var(--text-muted); }
+  .empty-state small { font-size: 12px; }
+</style>
+
+<div class="games-page">
+
+  <!-- ── Header ── -->
+  <div class="games-header">
+    <h1 class="games-title">Games</h1>
+
+    <div class="games-controls">
+      <!-- Search -->
+      <div class="search-wrap">
+        <span class="search-icon">⌕</span>
+        <input
+          class="search-input"
+          id="game-search"
+          type="text"
+          placeholder="Search games…"
+          autocomplete="off"
+        />
+      </div>
+
+      <!-- Filter (stub — wired up later) -->
+      <button class="filter-btn" id="filter-btn">
+        <span class="filter-icon">⊟</span> Filter
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Results meta ── -->
+  <p class="results-meta" id="results-meta"></p>
+
+  <!-- ── Grid ── -->
+  <div id="games-container">
+    <!-- Skeleton -->
+    <div id="games-skeleton" style="text-align: center; padding: 40px 0;">
+      <p style="color: var(--text-secondary); font-size: 14px;">Loading games<span class="loading-dots"></span></p>
+    </div>
+
+    <!-- Actual grid -->
+    <div class="games-grid" id="games-grid" style="display:none"></div>
+  </div>
+
+</div>
+
+<script>
+  const grid      = document.getElementById('games-grid')
+  const skeleton  = document.getElementById('games-skeleton')
+  const metaEl    = document.getElementById('results-meta')
+  const searchEl  = document.getElementById('game-search')
+
+  let debounceTimer = null
+
+  // ── Cover URL helper (IGDB returns //images.igdb.com/... without https) ──
+  function coverUrl(url) {
+    if (!url) return ''
+    // Upgrade to big cover and ensure https
+    return 'https:' + url.replace('t_thumb', 't_cover_big')
+  }
+
+  // ── Release year from IGDB unix timestamp ──
+  function releaseYear(timestamp) {
+    if (!timestamp) return ''
+    return new Date(timestamp * 1000).getFullYear()
+  }
+
+  // ── Render games into grid ──
+  function renderGames(games) {
+    skeleton.style.display = 'none'
+    grid.style.display     = 'grid'
+
+    if (!games || games.length === 0) {
+      grid.innerHTML = `
+        <div class="empty-state">
+          <p>No games found.</p>
+          <small>Try a different search term.</small>
+        </div>`
+      metaEl.innerHTML = ''
+      return
+    }
+
+    metaEl.innerHTML = `Showing <span>${games.length}</span> game${games.length !== 1 ? 's' : ''}`
+
+    grid.innerHTML = games.map(g => `
+      <a class="game-card" href="/games/${g.id}">
+        <div class="game-card-cover">
+          <img
+            class="game-card-img"
+            src="${coverUrl(g.cover?.url)}"
+            alt="${g.name}"
+            onerror="this.style.opacity='0'"
+          />
+          <div class="game-card-overlay">
+            <span class="game-card-quick">View game</span>
+          </div>
+        </div>
+        <p class="game-card-title">${g.name}</p>
+        <p class="game-card-year">${releaseYear(g.first_release_date)}</p>
+      </a>
+    `).join('')
+  }
+
+  // ── Fetch from your backend (proxies IGDB) ──
+  async function fetchGames(query = '') {
+    skeleton.style.display = 'grid'
+    grid.style.display     = 'none'
+    metaEl.innerHTML       = ''
+
+    try {
+      const url = query
+        ? `/api/games/search?q=${encodeURIComponent(query)}`
+        : `/api/games/popular`
+
+      const res   = await fetch(url)
+      const games = await res.json()
+      renderGames(games)
+    } catch (err) {
+      skeleton.style.display = 'none'
+      grid.style.display     = 'grid'
+      grid.innerHTML = `
+        <div class="empty-state">
+          <p>Something went wrong.</p>
+          <small>${err.message}</small>
+        </div>`
+    }
+  }
+
+  // ── Search with 350ms debounce ──
+  searchEl.addEventListener('input', () => {
+    clearTimeout(debounceTimer)
+    debounceTimer = setTimeout(() => {
+      fetchGames(searchEl.value.trim())
+    }, 350)
+  })
+
+  // ── Filter button stub ──
+  document.getElementById('filter-btn').addEventListener('click', () => {
+    // TODO: implement filter panel
+    console.log('filter clicked')
+  })
+
+  // ── Initial load ──
+  fetchGames()
+</script>

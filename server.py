@@ -9,7 +9,9 @@ from util.signup import signup_path, signup_user
 from util.get_user import get_user
 from util.logout import logout_view
 from util.home import home_path
-
+from util.get_games import games_path
+from util.get_games import search_games
+from util.get_games import popular_games
 class MyTCPHandler(socketserver.BaseRequestHandler):
 
     def __init__(self, request, client_address, server):
@@ -22,6 +24,9 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         self.router.add_route("GET", "/api/users/@me", get_user, False)
         self.router.add_route("GET", "/logout", logout_view, False)
         self.router.add_route("GET", "/home", home_path, True)
+        self.router.add_route("GET", "/games", games_path, True)
+        self.router.add_route("GET", "/api/games/search", search_games, False)
+        self.router.add_route("GET", "/api/games/popular", popular_games, False)
 
         super().__init__(request, client_address, server)
 
