@@ -1,0 +1,485 @@
+<style>
+  .review-page {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  .review-page-title {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    margin-bottom: 36px;
+  }
+
+  /* ── Form sections ── */
+  .form-section {
+    margin-bottom: 28px;
+  }
+
+  .form-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+  }
+
+  /* ── Game search ── */
+  .game-search-wrap { position: relative; }
+
+  .game-search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-dim);
+    font-size: 14px;
+    pointer-events: none;
+  }
+
+  .game-search-input {
+    width: 100%;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border-muted);
+    border-radius: 5px;
+    color: var(--text-primary);
+    font-size: 13px;
+    font-family: var(--font-body);
+    padding: 11px 14px 11px 34px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .game-search-input::placeholder { color: var(--text-dim); }
+  .game-search-input:focus        { border-color: var(--text-muted); }
+
+  /* ── Search results dropdown ── */
+  .game-results {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0; right: 0;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-muted);
+    border-radius: 6px;
+    overflow: hidden;
+    z-index: 50;
+    display: none;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  }
+
+  .game-result-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .game-result-item:hover { background: var(--bg-subtle); }
+
+  .game-result-cover {
+    width: 30px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 2px;
+    background: var(--bg-subtle);
+    flex-shrink: 0;
+  }
+
+  .game-result-name { font-size: 13px; color: var(--text-primary); font-weight: 500; }
+  .game-result-year { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+
+  .game-result-empty {
+    padding: 16px 14px;
+    font-size: 13px;
+    color: var(--text-dim);
+    text-align: center;
+  }
+
+  /* ── Selected game chip ── */
+  .selected-game {
+    display: none;
+    align-items: center;
+    gap: 12px;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border-muted);
+    border-radius: 6px;
+    padding: 10px 14px;
+  }
+
+  .selected-cover {
+    width: 32px;
+    height: 44px;
+    object-fit: cover;
+    border-radius: 3px;
+    background: var(--bg-subtle);
+    flex-shrink: 0;
+  }
+
+  .selected-info { flex: 1; min-width: 0; }
+  .selected-name { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .selected-year { font-size: 12px; color: var(--text-dim); }
+
+  .selected-clear {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-size: 18px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 4px;
+    transition: color 0.2s;
+  }
+  .selected-clear:hover { color: var(--text-primary); }
+
+  /* ── Star rating ── */
+  .star-picker {
+    display: flex;
+    gap: 6px;
+  }
+
+  .star-pick {
+    font-size: 28px;
+    color: var(--border-muted);
+    cursor: pointer;
+    transition: color 0.1s, transform 0.1s;
+    line-height: 1;
+    user-select: none;
+  }
+  .star-pick:hover          { transform: scale(1.15); }
+  .star-pick.filled         { color: var(--accent); }
+
+  .rating-label {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 8px;
+    min-height: 16px;
+  }
+
+  /* ── Review textarea ── */
+  .review-textarea {
+    width: 100%;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border-muted);
+    border-radius: 5px;
+    color: var(--text-primary);
+    font-size: 13px;
+    font-family: var(--font-body);
+    padding: 12px 14px;
+    outline: none;
+    resize: vertical;
+    min-height: 140px;
+    line-height: 1.65;
+    transition: border-color 0.2s;
+  }
+  .review-textarea::placeholder { color: var(--text-dim); }
+  .review-textarea:focus        { border-color: var(--text-muted); }
+
+  .char-count {
+    text-align: right;
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 6px;
+  }
+
+  /* ── Actions ── */
+  .form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 36px;
+  }
+
+  .submit-btn {
+    background: var(--accent);
+    color: var(--bg-base);
+    border: none;
+    border-radius: 5px;
+    padding: 12px 32px;
+    font-size: 12px;
+    font-family: var(--font-body);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .submit-btn:hover    { background: var(--accent-hover); }
+  .submit-btn:active   { transform: scale(0.97); }
+  .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .cancel-btn {
+    background: none;
+    color: var(--text-muted);
+    border: 1px solid var(--border-muted);
+    border-radius: 5px;
+    padding: 12px 24px;
+    font-size: 12px;
+    font-family: var(--font-body);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    text-decoration: none;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .cancel-btn:hover { border-color: var(--text-muted); color: var(--text-primary); }
+
+  /* ── Error ── */
+  .form-error {
+    background: rgba(224,116,107,0.1);
+    border: 1px solid rgba(224,116,107,0.3);
+    color: #e0746b;
+    font-size: 12px;
+    padding: 10px 14px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    display: none;
+  }
+</style>
+
+<div class="review-page">
+  <h1 class="review-page-title">Log a Game</h1>
+
+  <div class="form-error" id="form-error"></div>
+
+  <!-- ── Game picker ── -->
+  <div class="form-section">
+    <label class="form-label">Game</label>
+
+    <!-- Search input -->
+    <div class="game-search-wrap" id="game-search-wrap">
+      <span class="game-search-icon">⌕</span>
+      <input
+        class="game-search-input"
+        id="game-search-input"
+        type="text"
+        placeholder="Search for a game…"
+        autocomplete="off"
+      />
+      <div class="game-results" id="game-results"></div>
+    </div>
+
+    <!-- Selected game chip (shown after picking) -->
+    <div class="selected-game" id="selected-game">
+      <img class="selected-cover" id="selected-cover" src="" alt="" />
+      <div class="selected-info">
+        <p class="selected-name" id="selected-name"></p>
+        <p class="selected-year" id="selected-year"></p>
+      </div>
+      <button class="selected-clear" id="selected-clear" title="Remove">×</button>
+    </div>
+  </div>
+
+  <!-- ── Star rating ── -->
+  <div class="form-section">
+    <label class="form-label">Rating</label>
+    <div class="star-picker" id="star-picker">
+      <span class="star-pick" data-value="1">★</span>
+      <span class="star-pick" data-value="2">★</span>
+      <span class="star-pick" data-value="3">★</span>
+      <span class="star-pick" data-value="4">★</span>
+      <span class="star-pick" data-value="5">★</span>
+    </div>
+    <p class="rating-label" id="rating-label">No rating selected</p>
+  </div>
+
+  <!-- ── Review text ── -->
+  <div class="form-section">
+    <label class="form-label">Review <span style="color:var(--text-dim);font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
+    <textarea
+      class="review-textarea"
+      id="review-body"
+      placeholder="What did you think? Share your thoughts…"
+      maxlength="2000"
+    ></textarea>
+    <p class="char-count"><span id="char-count">0</span> / 2000</p>
+  </div>
+
+
+<div class="form-actions">
+    <button class="submit-btn" id="submit-btn" disabled>Save entry</button>
+    <a href="/journal" class="cancel-btn">Cancel</a>
+  </div>
+</div>
+
+<script>
+  // ── State ──
+  let selectedGame = null  // { id, name, cover_url, release_year }
+  let selectedRating = 0
+  let debounceTimer = null
+
+  const searchInput  = document.getElementById('game-search-input')
+  const resultsBox   = document.getElementById('game-results')
+  const searchWrap   = document.getElementById('game-search-wrap')
+  const selectedEl   = document.getElementById('selected-game')
+  const submitBtn    = document.getElementById('submit-btn')
+  const ratingLabel  = document.getElementById('rating-label')
+  const stars        = document.querySelectorAll('.star-pick')
+  const textarea     = document.getElementById('review-body')
+  const charCount    = document.getElementById('char-count')
+  const errorEl      = document.getElementById('form-error')
+
+  const RATING_LABELS = ['', 'Bad', 'Mediocre', 'Decent', 'Good', 'Excellent']
+
+  // ── Validation — enable submit only when game is picked ──
+  function validate() {
+    submitBtn.disabled = !selectedGame
+  }
+
+  // ── Cover URL helper ──
+  function coverUrl(url) {
+    if (!url) return ''
+    return 'https:' + url.replace('t_thumb', 't_cover_big')
+  }
+
+  function releaseYear(ts) {
+    if (!ts) return ''
+    return new Date(ts * 1000).getFullYear()
+  }
+
+  // ── Game search ──
+  async function searchGames(query) {
+    if (!query) { resultsBox.style.display = 'none'; return }
+
+    resultsBox.style.display = 'block'
+    resultsBox.innerHTML = '<p class="game-result-empty">Searching…</p>'
+
+    try {
+      const res   = await fetch(`/api/games/search?q=${encodeURIComponent(query)}`)
+      const games = await res.json()
+
+      if (!games || games.length === 0) {
+        resultsBox.innerHTML = '<p class="game-result-empty">No games found.</p>'
+        return
+      }
+
+      resultsBox.innerHTML = games.slice(0, 8).map(g => `
+        <div class="game-result-item" data-id="${g.id}" data-name="${g.name}"
+          data-cover="${g.cover?.url || ''}" data-year="${releaseYear(g.first_release_date)}">
+          <img class="game-result-cover"
+            src="${coverUrl(g.cover?.url)}"
+            onerror="this.style.opacity='0'" />
+          <div>
+            <p class="game-result-name">${g.name}</p>
+            <p class="game-result-year">${releaseYear(g.first_release_date)}</p>
+          </div>
+        </div>
+      `).join('')
+
+      // Bind pick events
+      resultsBox.querySelectorAll('.game-result-item').forEach(item => {
+        item.addEventListener('click', () => pickGame({
+          id:          item.dataset.id,
+          name:        item.dataset.name,
+          cover_url:   item.dataset.cover,
+          release_year: item.dataset.year
+        }))
+      })
+    } catch (_) {
+      resultsBox.innerHTML = '<p class="game-result-empty">Something went wrong.</p>'
+    }
+  }
+
+  // ── Pick a game ──
+  function pickGame(game) {
+    selectedGame = game
+
+    // Hide search, show chip
+    searchWrap.style.display  = 'none'
+    selectedEl.style.display  = 'flex'
+    resultsBox.style.display  = 'none'
+
+    document.getElementById('selected-cover').src         = coverUrl(game.cover_url)
+    document.getElementById('selected-name').textContent  = game.name
+    document.getElementById('selected-year').textContent  = game.release_year || ''
+
+    validate()
+  }
+
+  // ── Clear selected game ──
+  document.getElementById('selected-clear').addEventListener('click', () => {
+    selectedGame = null
+    searchWrap.style.display  = 'block'
+    selectedEl.style.display  = 'none'
+    searchInput.value         = ''
+    searchInput.focus()
+    validate()
+  })
+
+  // ── Search debounce ──
+  searchInput.addEventListener('input', () => {
+    clearTimeout(debounceTimer)
+    debounceTimer = setTimeout(() => searchGames(searchInput.value.trim()), 350)
+  })
+
+  // Close dropdown on outside click
+  document.addEventListener('click', e => {
+    if (!searchWrap.contains(e.target)) resultsBox.style.display = 'none'
+  })
+
+  // ── Star rating ──
+  stars.forEach(star => {
+    star.addEventListener('mouseenter', () => {
+      const val = parseInt(star.dataset.value)
+      stars.forEach(s => s.classList.toggle('filled', parseInt(s.dataset.value) <= val))
+    })
+
+    star.addEventListener('mouseleave', () => {
+      stars.forEach(s => s.classList.toggle('filled', parseInt(s.dataset.value) <= selectedRating))
+    })
+
+    star.addEventListener('click', () => {
+      selectedRating = parseInt(star.dataset.value)
+      stars.forEach(s => s.classList.toggle('filled', parseInt(s.dataset.value) <= selectedRating))
+      ratingLabel.textContent = RATING_LABELS[selectedRating]
+    })
+  })
+
+  // ── Char counter ──
+  textarea.addEventListener('input', () => {
+    charCount.textContent = textarea.value.length
+  })
+
+  // ── Submit ──
+  // POST /api/reviews
+  // Body: { igdb_id, game_name, cover_url, release_year, rating, body }
+  submitBtn.addEventListener('click', async () => {
+    errorEl.style.display = 'none'
+    submitBtn.disabled    = true
+    submitBtn.textContent = 'Saving…'
+
+    try {
+      const res = await fetch('/api/reviews', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          igdb_id:      selectedGame.id,
+          game_name:    selectedGame.name,
+          cover_url:    selectedGame.cover_url,
+          release_year: selectedGame.release_year,
+          rating:       selectedRating || null,
+          body:         textarea.value.trim() || null
+        })
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to save entry.')
+      }
+
+      // Redirect to journal on success
+      window.location.href = '/journal'
+
+    } catch (err) {
+      errorEl.textContent   = err.message
+      errorEl.style.display = 'block'
+      submitBtn.disabled    = false
+      submitBtn.textContent = 'Save entry'
+    }
+  })
+</script>

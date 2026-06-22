@@ -16,3 +16,4 @@ else:
 db = mongo_client["gameboxd"]
 
 user_collection = db["users"]
+review_collection = db["reviews"]

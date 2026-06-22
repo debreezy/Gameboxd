@@ -1,0 +1,291 @@
+<style>
+  .journal-page {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 36px 24px 80px;
+  }
+
+  .journal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 36px;
+  }
+
+  .journal-title {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+  }
+
+  .log-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent);
+    color: var(--bg-base);
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 12px;
+    font-family: var(--font-body);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .log-btn:hover  { background: var(--accent-hover); }
+  .log-btn:active { transform: scale(0.97); }
+  .log-btn-icon   { font-size: 16px; font-weight: 300; line-height: 1; }
+
+  /* ── Filters row ── */
+  .journal-filters {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 28px;
+    border-bottom: 1px solid var(--border-faint);
+    padding-bottom: 0;
+  }
+
+  .filter-tab {
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text-dim);
+    font-size: 11px;
+    font-family: var(--font-body);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 10px 4px;
+    margin-bottom: -1px;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .filter-tab:hover  { color: var(--text-secondary); }
+  .filter-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* ── Entry list ── */
+  .journal-list { display: flex; flex-direction: column; }
+
+  .journal-entry {
+    display: flex;
+    gap: 16px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--border-faint);
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .journal-entry:hover { opacity: 0.85; }
+
+  .entry-cover {
+    width: 46px;
+    height: 62px;
+    object-fit: cover;
+    border-radius: 3px;
+    background: var(--bg-subtle);
+    flex-shrink: 0;
+  }
+
+  .entry-body  { flex: 1; min-width: 0; }
+
+  .entry-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 5px;
+    flex-wrap: wrap;
+  }
+
+  .entry-game  { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .entry-year  { font-size: 11px; color: var(--text-dim); }
+
+  .entry-stars {
+    display: flex;
+    gap: 1px;
+    margin-left: 2px;
+  }
+  .entry-star       { font-size: 11px; color: var(--accent); }
+  .entry-star.empty { color: var(--border-muted); }
+
+  .entry-text {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 8px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .entry-date { font-size: 11px; color: var(--text-dim); }
+
+  /* ── Empty state ── */
+  .empty-journal {
+    text-align: center;
+    padding: 80px 0;
+    display: none;
+  }
+
+  .empty-journal p     { font-size: 15px; color: var(--text-muted); margin-bottom: 8px; }
+  .empty-journal small { font-size: 12px; color: var(--text-dim); display: block; margin-bottom: 24px; }
+
+  /* ── Skeleton ── */
+  .skeleton-entry {
+    display: flex;
+    gap: 16px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--border-faint);
+  }
+
+  .skeleton-thumb {
+    width: 46px; height: 62px;
+    background: var(--bg-subtle);
+    border-radius: 3px;
+    flex-shrink: 0;
+    animation: shimmer 1.4s infinite;
+  }
+
+  .skeleton-lines { flex: 1; display: flex; flex-direction: column; gap: 8px; padding-top: 4px; }
+
+  .skeleton-line {
+    height: 10px;
+    background: var(--bg-subtle);
+    border-radius: 4px;
+    animation: shimmer 1.4s infinite;
+  }
+
+  @keyframes shimmer {
+    0%   { opacity: 0.4; }
+    50%  { opacity: 0.8; }
+    100% { opacity: 0.4; }
+  }
+</style>
+
+<div class="journal-page">
+
+  <div class="journal-header">
+    <h1 class="journal-title">My Journal</h1>
+    <a href="/new-review" class="log-btn">
+      <span class="log-btn-icon">+</span> Log a game
+    </a>
+  </div>
+
+  <div class="journal-filters">
+    <button class="filter-tab active" data-filter="all">All</button>
+    <button class="filter-tab" data-filter="reviewed">Reviewed</button>
+    <button class="filter-tab" data-filter="played">Played</button>
+  </div>
+
+  <!-- Skeleton -->
+  <div id="journal-skeleton">
+    <div class="skeleton-entry"><div class="skeleton-thumb"></div><div class="skeleton-lines"><div class="skeleton-line" style="width:40%"></div><div class="skeleton-line" style="width:85%"></div><div class="skeleton-line" style="width:60%"></div></div></div>
+    <div class="skeleton-entry"><div class="skeleton-thumb"></div><div class="skeleton-lines"><div class="skeleton-line" style="width:35%"></div><div class="skeleton-line" style="width:78%"></div><div class="skeleton-line" style="width:50%"></div></div></div>
+    <div class="skeleton-entry"><div class="skeleton-thumb"></div><div class="skeleton-lines"><div class="skeleton-line" style="width:45%"></div><div class="skeleton-line" style="width:90%"></div><div class="skeleton-line" style="width:65%"></div></div></div>
+  </div>
+
+  <!-- Empty state -->
+  <div class="empty-journal" id="journal-empty">
+    <p>Your journal is empty.</p>
+    <small>Start logging the games you play.</small>
+    <a href="/new-review" class="log-btn" style="display:inline-flex">
+      <span class="log-btn-icon">+</span> Log your first game
+    </a>
+  </div>
+
+  <!-- Entries -->
+  <div class="journal-list" id="journal-list" style="display:none"></div>
+
+</div>
+
+<script>
+  function stars(rating) {
+    let html = ''
+    for (let i = 1; i <= 5; i++) {
+      html += `<span class="entry-star${i > rating ? ' empty' : ''}">★</span>`
+    }
+    return `<div class="entry-stars">${html}</div>`
+  }
+
+  function formatDate(str) {
+    if (!str) return ''
+    return new Date(str).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+  }
+
+  function coverUrl(url) {
+    if (!url) return ''
+    return 'https:' + url.replace('t_thumb', 't_cover_big')
+  }
+
+  /**
+   * renderEntries(entries)
+   *
+   * Expected shape per entry:
+   * {
+   *   id,
+   *   game: { title, cover_url, release_year },
+   *   rating: 4,
+   *   body: "Review text...",
+   *   created_at: "2025-06-18T..."
+   * }
+   */
+  function renderEntries(entries) {
+    const skeleton = document.getElementById('journal-skeleton')
+    const empty    = document.getElementById('journal-empty')
+    const list     = document.getElementById('journal-list')
+
+    skeleton.style.display = 'none'
+
+    if (!entries || entries.length === 0) {
+      empty.style.display = 'block'
+      return
+    }
+
+    list.style.display = 'flex'
+    list.innerHTML = entries.map(e => `
+      <div class="journal-entry" onclick="location.href='/reviews/${e.id}'">
+        <img class="entry-cover"
+          src="${coverUrl(e.game?.cover_url)}"
+          alt="${e.game?.title || ''}"
+          onerror="this.style.opacity='0'" />
+        <div class="entry-body">
+          <div class="entry-top">
+            <span class="entry-game">${e.game?.title || 'Unknown game'}</span>
+            <span class="entry-year">${e.game?.release_year || ''}</span>
+            ${e.rating ? stars(e.rating) : ''}
+          </div>
+          ${e.body ? `<p class="entry-text">${e.body}</p>` : ''}
+          <span class="entry-date">${formatDate(e.created_at)}</span>
+        </div>
+      </div>
+    `).join('')
+  }
+
+  // Filter tabs (client-side toggle — server can also accept ?filter= param)
+  document.querySelectorAll('.filter-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'))
+      tab.classList.add('active')
+      // TODO: re-fetch with filter when backend supports it
+      // fetchJournal(tab.dataset.filter)
+    })
+  })
+
+  // GET /api/journal — returns the logged-in user's entries
+  async function fetchJournal() {
+    try {
+      const res     = await fetch('/api/journal')
+      const entries = await res.json()
+      renderEntries(entries)
+    } catch (_) {
+      renderEntries([])
+    }
+  }
+
+  fetchJournal()
+</script>
