@@ -307,6 +307,30 @@
 </div>
 
 <script>
+  // ── Check authentication ──
+  async function checkAuth() {
+    try {
+      const profile = await (await fetch('/api/users/@me')).json()
+      if (!profile || !profile.id) {
+        location.href = '/'
+        return false
+      }
+      return true
+    } catch (_) {
+      location.href = '/'
+      return false
+    }
+  }
+  
+  // Redirect if not authenticated
+  checkAuth().then(isAuth => {
+    if (!isAuth) return
+    
+    // Continue with normal page load
+    initializeReviewForm()
+  })
+
+  function initializeReviewForm() {
   // ── State ──
   let selectedGame = null  // { id, name, cover_url, release_year }
   let selectedRating = 0
@@ -482,4 +506,5 @@
       submitBtn.textContent = 'Save entry'
     }
   })
+  }
 </script>

@@ -279,11 +279,18 @@
   // GET /api/journal — returns the logged-in user's entries
   async function fetchJournal() {
     try {
+      // Check authentication first
+      const profile = await (await fetch('/api/users/@me')).json()
+      if (!profile || !profile.id) {
+        location.href = '/'
+        return
+      }
+      
       const res     = await fetch('/api/journal')
       const entries = await res.json()
       renderEntries(entries)
     } catch (_) {
-      renderEntries([])
+      location.href = '/'
     }
   }
 

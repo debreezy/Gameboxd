@@ -12,11 +12,14 @@ from util.home import home_path
 from util.get_games import games_path
 from util.get_games import search_games
 from util.get_games import popular_games
+from util.get_games import trending_games
 from util.get_reviews import journal_path
 from util.get_reviews import get_reviews
 from util.create_review import create_review
 from util.create_review import new_rev_path
 from util.get_reviews import recent_activity
+from dotenv import load_dotenv
+load_dotenv()
 class MyTCPHandler(socketserver.BaseRequestHandler):
 
     def __init__(self, request, client_address, server):
@@ -32,6 +35,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         self.router.add_route("GET", "/games", games_path, True)
         self.router.add_route("GET", "/api/games/search", search_games, False)
         self.router.add_route("GET", "/api/games/popular", popular_games, False)
+        self.router.add_route("GET", "/api/games/trending", trending_games, False)
         self.router.add_route("GET", "/journal", journal_path, True)
         self.router.add_route("GET", "/new-review", new_rev_path, True)
         self.router.add_route("GET", "/api/journal", get_reviews, False)

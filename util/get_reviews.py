@@ -42,6 +42,7 @@ def recent_activity(request, handler):
                 "username": user["username"] if user else "Unknown"
             },
             "rating": review.get("rating", 0),
+            "body": review.get("body", "")[:100],  # Include preview of review
             "played_at": review.get("created_at")
         })
 

@@ -1,3 +1,5 @@
 pymongo>=4.0
 requests
 bcrypt
+python-dotenv
+dotenv
