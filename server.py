@@ -13,11 +13,18 @@ from util.get_games import games_path
 from util.get_games import search_games
 from util.get_games import popular_games
 from util.get_games import trending_games
+from util.get_games import popular_reviews
 from util.get_reviews import journal_path
 from util.get_reviews import get_reviews
 from util.create_review import create_review
 from util.create_review import new_rev_path
 from util.get_reviews import recent_activity
+from util.get_reviews import all_activity_path
+from util.view_reviews import view_rev
+from util.view_reviews import rev_page_path
+from util.view_reviews import like_review
+from util.create_comment import create_comment
+from util.create_comment import get_comment
 from dotenv import load_dotenv
 load_dotenv()
 class MyTCPHandler(socketserver.BaseRequestHandler):
@@ -36,11 +43,18 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         self.router.add_route("GET", "/api/games/search", search_games, False)
         self.router.add_route("GET", "/api/games/popular", popular_games, False)
         self.router.add_route("GET", "/api/games/trending", trending_games, False)
+        self.router.add_route("GET", "/api/reviews/popular", popular_reviews, False)
         self.router.add_route("GET", "/journal", journal_path, True)
+        self.router.add_route("GET", "/all-activity", all_activity_path, True)
         self.router.add_route("GET", "/new-review", new_rev_path, True)
         self.router.add_route("GET", "/api/journal", get_reviews, False)
-        self.router.add_route("POST", "/api/reviews", create_review, False)
-        self.router.add_route("GET", "/api/activity/recent",recent_activity , True)
+        self.router.add_route("POST", "/api/reviews/view", view_rev, False)
+        self.router.add_route("POST", "/api/reviews/", like_review, False)
+        self.router.add_route("POST", "/api/reviews", create_review, True)
+        self.router.add_route("GET", "/api/activity/recent", recent_activity, False)
+        self.router.add_route("GET", "/review-page", rev_page_path, False)
+        self.router.add_route("POST", "/api/comments", create_comment, False)
+        self.router.add_route("GET", "/api/comments", get_comment, False)
 
         super().__init__(request, client_address, server)
 

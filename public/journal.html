@@ -248,7 +248,7 @@
 
     list.style.display = 'flex'
     list.innerHTML = entries.map(e => `
-      <div class="journal-entry" onclick="location.href='/reviews/${e.id}'">
+      <div class="journal-entry" onclick="location.href='/review-page?id=${e.id}'">
         <img class="entry-cover"
           src="${coverUrl(e.game?.cover_url)}"
           alt="${e.game?.title || ''}"

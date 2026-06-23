@@ -1,23 +1,26 @@
+To run:
 
+1. Create a `.env` file (copy from `.env.example`)
+2. Add your own IGDB credentials from Twitch Developer Console
+3. Run the server
 
+TODO:
 
+-figure out how to  make users see without revealing client_id and secret
 
+-frontend and backend for members page
+-list members with popular reviews
 
+-frontend and backend for game pages
+-game name, cover, description, average ratings
+-user reviews
 
+-profile page frontend and backend
+-change profile
+-change password
+-click username on top right
 
-
-backend routes to wire for game page
-# GET /api/games/popular
-# return up to 50 popular games from IGDB
-data = 'fields name,cover.url,first_release_date; sort popularity desc; limit 50;'
-
-
-for filter
-# GET /api/games/search?q=query
-# return search results from IGDB
-data = f'search "{query}"; fields name,cover.url,first_release_date; limit 50;'
-
-create search games file
-return games based off keyword input by user
-using query strings
-GET request
+-frontend and backend for list page
+-create lists of games
+-name lists
+-be able to add and remove games from list

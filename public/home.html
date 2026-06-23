@@ -267,13 +267,6 @@
     font-weight: 800;
     color: var(--bg-base);
     flex-shrink: 0;
-    box-shadow: 0 3px 8px rgba(212, 168, 67, 0.3);
-    transition: all 0.3s;
-  }
-  
-  .activity-card:hover .activity-avatar {
-    transform: scale(1.1);
-    box-shadow: 0 4px 12px rgba(212, 168, 67, 0.4);
   }
 
   .activity-username {
@@ -361,6 +354,8 @@
     border-radius: 3px;
     background: var(--bg-subtle);
     flex-shrink: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease-in;
   }
 
   .review-body { flex: 1; min-width: 0; }
@@ -394,16 +389,16 @@
   }
 
   .reviewer-avatar {
-    width: 22px;
-    height: 22px;
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
-    background: var(--border-muted);
+    background: var(--accent);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 10px;
-    font-weight: 700;
-    color: var(--accent);
+    font-weight: 800;
+    color: var(--bg-base);
     flex-shrink: 0;
   }
 
@@ -526,7 +521,7 @@
   <section class="home-section">
     <div class="section-header">
       <span class="section-label">Recent Activity</span>
-      <a href="/games" class="section-more">All Activity</a>
+      <a href="/all-activity" class="section-more">All Activity</a>
     </div>
     <div id="recent-activity-container">
       <!-- skeleton while loading -->
@@ -698,7 +693,7 @@
     }
 
     grid.innerHTML = entries.map(e => `
-      <div class="activity-card">
+      <div class="activity-card" onclick="location.href='/review-page?id=${e.id}'">
         <div class="activity-cover-wrap">
           ${coverImg(e.game.cover_url, e.game.title)}
         </div>
@@ -775,9 +770,9 @@
     }
 
     list.innerHTML = reviews.map(r => `
-      <div class="review-row" onclick="location.href='/reviews/${r.id}'">
+      <div class="review-row" onclick="location.href='/review-page?id=${r.id}'">
         <img class="review-cover" src="${r.game.cover_url || ''}" alt="${r.game.title}"
-             onerror="this.style.opacity='0'" />
+             onload="this.style.opacity='1'" />
         <div class="review-body">
           <div class="review-top">
             <span class="review-game-title">${r.game.title}</span>

@@ -21,11 +21,28 @@ def journal_path(request, handler):
     handler.request.sendall(res.to_data())
     print("Response sent")
 
-def recent_activity(request, handler):
+def all_activity_path(request, handler):
+    file_path = "public/all-activity.html"
+    content = read_files(file_path)
+    res = Response()
+    res.bytes(content)
+    res.headers({"Content-Type": "text/html; charset=utf-8"})
+    print("Sending response:", res.to_data())
+    handler.request.sendall(res.to_data())
+    print("Response sent")
 
-    reviews = list(
-        review_collection.find().sort("created_at", -1).limit(12)
-    )
+def recent_activity(request, handler):
+  
+    parsed = urlparse(request.path)
+    params = parse_qs(parsed.query)
+    get_all = params.get("all", [None])[0]
+    
+    limit = None if get_all else 4
+
+    query = review_collection.find().sort("created_at", -1)
+    if limit is not None:
+        query = query.limit(limit)
+    reviews = list(query)
     entries = []
 
     for review in reviews:
@@ -34,6 +51,7 @@ def recent_activity(request, handler):
         })
 
         entries.append({
+            "id": review["id"],
             "game": {
                 "title": review["game_name"],
                 "cover_url": review["cover_url"]
@@ -42,7 +60,7 @@ def recent_activity(request, handler):
                 "username": user["username"] if user else "Unknown"
             },
             "rating": review.get("rating", 0),
-            "body": review.get("body", "")[:100],  # Include preview of review
+            "body": review.get("body", "")[:100],
             "played_at": review.get("created_at")
         })
 

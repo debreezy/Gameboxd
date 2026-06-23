@@ -1,0 +1,506 @@
+<style>
+  .review-page {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  /* ── Game hero ── */
+  .game-hero {
+    display: flex;
+    gap: 28px;
+    margin-bottom: 40px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--border-faint);
+  }
+
+  .game-hero-cover {
+    width: 120px;
+    flex-shrink: 0;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .game-hero-cover img {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    display: block;
+    background: var(--bg-subtle);
+    opacity: 0;
+    transition: opacity 0.3s ease-in;
+  }
+
+  .game-hero-info { flex: 1; min-width: 0; }
+
+  .game-hero-title {
+    font-family: var(--font-display);
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    margin-bottom: 4px;
+    line-height: 1.1;
+  }
+
+  .game-hero-year {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+  }
+
+  .game-hero-stars {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    margin-bottom: 8px;
+  }
+
+  .hero-star       { font-size: 20px; color: var(--accent); line-height: 1; }
+  .hero-star.empty { color: var(--border-muted); }
+
+  .game-hero-meta {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 6px;
+  }
+
+  /* ── Review body ── */
+  .review-author-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .author-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--bg-base);
+    flex-shrink: 0;
+  }
+
+  .author-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .author-date {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-left: auto;
+  }
+
+  .review-body-text {
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin-bottom: 28px;
+    white-space: pre-wrap;
+  }
+
+  .no-review-text {
+    font-size: 14px;
+    color: var(--text-dim);
+    font-style: italic;
+    margin-bottom: 28px;
+  }
+
+  /* ── Like button ── */
+  .review-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 0;
+    border-top: 1px solid var(--border-faint);
+    border-bottom: 1px solid var(--border-faint);
+    margin-bottom: 48px;
+  }
+
+  .like-btn {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: none;
+    border: 1px solid var(--border-muted);
+    border-radius: 5px;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-family: var(--font-body);
+    font-weight: 600;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+    user-select: none;
+  }
+
+  .like-btn:hover {
+    border-color: #e05c7a;
+    color: #e05c7a;
+  }
+
+  .like-btn.liked {
+    background: rgba(224, 92, 122, 0.1);
+    border-color: #e05c7a;
+    color: #e05c7a;
+  }
+
+  .like-heart { font-size: 15px; transition: transform 0.15s; }
+  .like-btn:hover .like-heart,
+  .like-btn.liked .like-heart { transform: scale(1.2); }
+
+  .like-count { font-size: 13px; }
+
+  /* ── Comments section ── */
+  .comments-title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 24px;
+  }
+
+  /* ── Write a comment ── */
+  .comment-form { margin-bottom: 36px; }
+
+  .comment-textarea {
+    width: 100%;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border-muted);
+    border-radius: 5px;
+    color: var(--text-primary);
+    font-size: 13px;
+    font-family: var(--font-body);
+    padding: 12px 14px;
+    outline: none;
+    resize: vertical;
+    min-height: 90px;
+    line-height: 1.6;
+    transition: border-color 0.2s;
+    margin-bottom: 10px;
+  }
+  .comment-textarea::placeholder { color: var(--text-dim); }
+  .comment-textarea:focus        { border-color: var(--text-muted); }
+
+  .comment-submit {
+    background: var(--accent);
+    color: var(--bg-base);
+    border: none;
+    border-radius: 4px;
+    padding: 9px 22px;
+    font-size: 11px;
+    font-family: var(--font-body);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .comment-submit:hover    { background: var(--accent-hover); }
+  .comment-submit:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* ── Comment list ── */
+  .comment-list { display: flex; flex-direction: column; gap: 24px; }
+
+  .comment-item {
+    display: flex;
+    gap: 12px;
+  }
+
+  .comment-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--bg-base);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .comment-body { flex: 1; }
+
+  .comment-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 5px;
+  }
+
+  .comment-author { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+  .comment-date   { font-size: 11px; color: var(--text-dim); }
+
+  .comment-text {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .empty-comments {
+    font-size: 13px;
+    color: var(--text-dim);
+    text-align: center;
+    padding: 32px 0;
+  }
+
+  /* ── Skeleton ── */
+  .skeleton-block {
+    background: var(--bg-subtle);
+    border-radius: 4px;
+    animation: shimmer 1.4s infinite;
+  }
+
+  @keyframes shimmer {
+    0%   { opacity: 0.4; }
+    50%  { opacity: 0.8; }
+    100% { opacity: 0.4; }
+  }
+</style>
+
+<div class="review-page" id="review-page">
+
+  <!-- ── Game hero ── -->
+  <div class="game-hero" id="game-hero">
+    <div class="game-hero-cover">
+      <img id="hero-cover" src="" alt="" 
+           onload="this.style.opacity='1'" />
+    </div>
+    <div class="game-hero-info">
+      <h1 class="game-hero-title" id="hero-title"></h1>
+      <p class="game-hero-year"  id="hero-year"></p>
+      <div class="game-hero-stars" id="hero-stars"></div>
+      <p class="game-hero-meta"  id="hero-meta"></p>
+    </div>
+  </div>
+
+  <!-- ── Review ── -->
+  <div class="review-author-row">
+    <div class="author-avatar" id="author-avatar"></div>
+    <span class="author-name"  id="author-name"></span>
+    <span class="author-date"  id="author-date"></span>
+  </div>
+
+  <div id="review-text-wrap"></div>
+
+  <!-- ── Like button ── -->
+  <div class="review-actions">
+    <button class="like-btn" id="like-btn">
+      <span class="like-heart">♥</span>
+      <span class="like-count" id="like-count">0</span>
+    </button>
+  </div>
+
+  <!-- ── Comments ── -->
+  <h2 class="comments-title">Comments</h2>
+
+  <div class="comment-form">
+    <textarea
+      class="comment-textarea"
+      id="comment-input"
+      placeholder="Leave a comment…"
+      maxlength="500"
+    ></textarea>
+    <button class="comment-submit" id="comment-submit">Post comment</button>
+  </div>
+
+  <div class="comment-list" id="comment-list"></div>
+
+</div>
+
+<script>
+  // ── Get review ID from URL query parameter (?id=123) ──
+  const reviewId = new URLSearchParams(window.location.search).get('id')
+
+  let liked      = false
+  let likeCount  = 0
+
+  function coverUrl(url) {
+    if (!url) return ''
+    return url.startsWith('http') ? url : 'https:' + url.replace('t_thumb', 't_cover_big')
+  }
+
+  function formatDate(str) {
+    if (!str) return ''
+    return new Date(str).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+  }
+
+  function renderStars(rating) {
+    if (!rating) return ''
+    let html = ''
+    for (let i = 1; i <= 5; i++) {
+      html += `<span class="hero-star${i > rating ? ' empty' : ''}">★</span>`
+    }
+    return html
+  }
+
+  // ── Render review data ──
+  /**
+   * Expected shape from GET /api/reviews/:id
+   * {
+   *   id,
+   *   game_name, cover_url, release_year,
+   *   rating, body,
+   *   likes: 12,
+   *   user_liked: false,
+   *   created_at,
+   *   user: { username }
+   * }
+   */
+  function renderReview(review) {
+    document.getElementById('hero-cover').src        = coverUrl(review.cover_url)
+    document.getElementById('hero-title').textContent = review.game_name || ''
+    document.getElementById('hero-year').textContent  = review.release_year || ''
+    document.getElementById('hero-stars').innerHTML   = renderStars(review.rating)
+    document.getElementById('hero-meta').textContent  = review.rating ? `Rated ${review.rating}/5` : 'No rating'
+
+    const username = review.user?.username || 'Unknown'
+    document.getElementById('author-avatar').textContent = username[0].toUpperCase()
+    document.getElementById('author-name').textContent   = username
+    document.getElementById('author-date').textContent   = formatDate(review.created_at)
+
+    const textWrap = document.getElementById('review-text-wrap')
+    textWrap.innerHTML = review.body
+      ? `<p class="review-body-text">${review.body}</p>`
+      : `<p class="no-review-text">No written review.</p>`
+
+    likeCount = review.likes || 0
+    liked     = review.user_liked || false
+    document.getElementById('like-count').textContent = likeCount
+    document.getElementById('like-btn').classList.toggle('liked', liked)
+  }
+
+  // ── Render comments ──
+  /**
+   * Expected shape per comment from GET /api/reviews/:id/comments
+   * { id, user: { username }, body, created_at }
+   */
+  function renderComments(comments) {
+    const list = document.getElementById('comment-list')
+
+    if (!comments || comments.length === 0) {
+      list.innerHTML = '<p class="empty-comments">No comments yet. Be the first!</p>'
+      return
+    }
+
+    list.innerHTML = comments.map(c => `
+      <div class="comment-item">
+        <div class="comment-avatar">${(c.user?.username || '?')[0].toUpperCase()}</div>
+        <div class="comment-body">
+          <div class="comment-header">
+            <span class="comment-author">${c.user?.username || 'Unknown'}</span>
+            <span class="comment-date">${formatDate(c.created_at)}</span>
+          </div>
+          <p class="comment-text">${c.body}</p>
+        </div>
+      </div>
+    `).join('')
+  }
+
+  // ── Like ──
+  // POST /api/reviews/:id/like  — toggles like on/off
+  document.getElementById('like-btn').addEventListener('click', async () => {
+    const btn = document.getElementById('like-btn')
+    liked     = !liked
+    likeCount = liked ? likeCount + 1 : likeCount - 1
+
+    btn.classList.toggle('liked', liked)
+    document.getElementById('like-count').textContent = likeCount
+
+    try {
+      await fetch(`/api/reviews/${reviewId}/like`, { method: 'POST' })
+    } catch (_) {
+      // revert on failure
+      liked     = !liked
+      likeCount = liked ? likeCount + 1 : likeCount - 1
+      btn.classList.toggle('liked', liked)
+      document.getElementById('like-count').textContent = likeCount
+    }
+  })
+
+  // ── Post comment ──
+  // POST /api/comments  body: { review_id: ..., body: "..." }
+  document.getElementById('comment-submit').addEventListener('click', async () => {
+    const input  = document.getElementById('comment-input')
+    const btn    = document.getElementById('comment-submit')
+    const text   = input.value.trim()
+
+    if (!text) return
+
+    btn.disabled    = true
+    btn.textContent = 'Posting…'
+
+    try {
+      const res  = await fetch('/api/comments', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ review_id: parseInt(reviewId), body: text })
+      })
+
+      const comment = await res.json()
+
+      if (!res.ok) throw new Error(comment.error || 'Failed to post comment.')
+
+      // Append the new comment instantly without re-fetching
+      const list = document.getElementById('comment-list')
+      const emptyMsg = list.querySelector('.empty-comments')
+      if (emptyMsg) emptyMsg.remove()
+
+      const item = document.createElement('div')
+      item.className = 'comment-item'
+      item.innerHTML = `
+        <div class="comment-avatar">${(comment.user?.username || '?')[0].toUpperCase()}</div>
+        <div class="comment-body">
+          <div class="comment-header">
+            <span class="comment-author">${comment.user?.username || 'You'}</span>
+            <span class="comment-date">Just now</span>
+          </div>
+          <p class="comment-text">${comment.body}</p>
+        </div>
+      `
+      list.prepend(item)
+
+      input.value     = ''
+      btn.disabled    = false
+      btn.textContent = 'Post comment'
+    } catch (err) {
+      btn.disabled    = false
+      btn.textContent = 'Post comment'
+      alert(err.message)
+    }
+  })
+
+  // ── Load page data ──
+  async function loadReview() {
+  if (!reviewId) {
+    document.getElementById('review-page').innerHTML =
+      `<p style="color:var(--text-dim);text-align:center;padding:60px 0">No review ID provided.</p>`
+    return
+  }
+
+  const reviewRes = await fetch('/api/reviews/view', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id: parseInt(reviewId) })
+  })
+  const review = await reviewRes.json()
+  renderReview(review)
+
+  const commentsRes = await fetch(`/api/comments?review_id=${reviewId}`)
+  const comments = await commentsRes.json()
+  renderComments(comments)
+}
+
+  loadReview()
+</script>

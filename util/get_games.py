@@ -10,6 +10,7 @@ from util.database import review_collection
 import requests
 import os
 from datetime import datetime, timedelta
+from util.database import user_collection
 
 
 
@@ -98,7 +99,7 @@ def trending_games(request, handler):
         games_info.items(),
         key=lambda x: game_counts[x[0]],
         reverse=True
-    )[:12]
+    )[:4]
     
     trending = [game_data for game_id, game_data in sorted_games]
     
@@ -107,5 +108,50 @@ def trending_games(request, handler):
     res = Response()
     res.headers({"Content-Type": "application/json"})
     res.text(json.dumps(trending))
+    handler.request.sendall(res.to_data())
+
+
+def popular_reviews(request, handler):
+
+    reviews = list(
+        review_collection.find().sort("likes", -1).limit(4)
+    )
+    
+    result = []
+    for review in reviews:
+        user = user_collection.find_one({"id": review.get("user_id")})
+        
+        # Format cover_url properly
+        cover_url = review.get("cover_url", "")
+        if cover_url:
+            cover_url = cover_url.replace("t_thumb", "t_cover_big")
+            if not cover_url.startswith("https://"):
+                if cover_url.startswith("http://"):
+                    cover_url = cover_url.replace("http://", "https://", 1)
+                elif cover_url.startswith("//"):
+                    cover_url = "https:" + cover_url
+                else:
+                    cover_url = "https://" + cover_url
+        
+        entry = {
+            "id": review["id"],
+            "game": {
+                "title": review.get("game_name"),
+                "cover_url": cover_url,
+                "release_year": review.get("release_year")
+            },
+            "user": {
+                "username": user["username"] if user else "Unknown"
+            },
+            "rating": review.get("rating"),
+            "body": review.get("body", ""),
+            "likes": review.get("likes", 0),
+            "created_at": review.get("created_at")
+        }
+        result.append(entry)
+    
+    res = Response()
+    res.headers({"Content-Type": "application/json"})
+    res.text(json.dumps(result))
     handler.request.sendall(res.to_data())
 
