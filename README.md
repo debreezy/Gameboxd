@@ -6,8 +6,6 @@ To run:
 
 TODO:
 
--figure out how to  make users see without revealing client_id and secret
-
 -frontend and backend for members page
 -list members with popular reviews
 
